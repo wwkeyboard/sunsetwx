@@ -38,5 +38,8 @@ func GetConfig() (*Config, error) {
 		return nil, fmt.Errorf(strings.Join(errors, "\n"))
 	}
 
-	return &Config{}, nil
+	return &Config{
+		username: username,
+		password: password,
+	}, nil
 }
