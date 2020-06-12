@@ -1,4 +1,4 @@
-package quality
+package sunsetwx
 
 import (
 	"encoding/json"

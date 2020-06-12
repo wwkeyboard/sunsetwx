@@ -1,11 +1,11 @@
-package quality
+package sunsetwx
 
 import (
 	"testing"
 )
 
 func TestFromJson(t *testing.T) {
-	fc, err := FromJSON([]byte(sample()))
+	fc, err := FromJSON([]byte(featureCollectionSample()))
 	if err != nil {
 		t.Error(err)
 	}
@@ -16,7 +16,7 @@ func TestFromJson(t *testing.T) {
 
 }
 
-func sample() string {
+func featureCollectionSample() string {
 	samp := `{
 		"type": "FeatureCollection",
 		"features": [

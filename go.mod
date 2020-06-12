@@ -1,3 +1,3 @@
-module github.com/wwkeyboard/champaignsunset
+module github.com/wwkeyboard/sunsetwx
 
 go 1.14
