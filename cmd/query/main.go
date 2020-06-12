@@ -5,16 +5,22 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strings"
 )
 
+type Config struct {
+	username string
+	password string
+}
+
 func main() {
-	fmt.Println("here!")
-	token := os.Getenv("SUNSETWX_AUTH_TOKEN")
-	if len(token) < 10 {
-		fmt.Println("you must set the SunsetWX token in SUNSETWX_AUTH_TOKEN")
+	config, err := GetConfig()
+	if err != nil {
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
+	fmt.Println("%#v", config)
 	client := &http.Client{}
 
 	req, err := http.NewRequest("GET", "https://sunburst.sunsetwx.com/v1/quality", nil)
@@ -22,6 +28,7 @@ func main() {
 		fmt.Println("could make request", err)
 		os.Exit(1)
 	}
+	token := "foo"
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %v", token))
 
 	resp, err := client.Do(req)
@@ -36,4 +43,23 @@ func main() {
 		os.Exit(1)
 	}
 	fmt.Printf("%s\n", body)
+}
+
+// GetConfig for this run from the environment
+func GetConfig() (*Config, error) {
+	var errors []string
+	username := os.Getenv("SUNSETWX_USERNAME")
+	if len(username) == 0 {
+		errors = append(errors, "you must set env var SUNSETWK_USERNAME")
+	}
+
+	password := os.Getenv("SUNSETWX_PASSWORD")
+	if len(password) == 0 {
+		errors = append(errors, "you must set env var SUNSETWX_PASSWORD")
+	}
+	if len(errors) > 0 {
+		return nil, fmt.Errorf(strings.Join(errors, "\n"))
+	}
+
+	return &Config{}, nil
 }
