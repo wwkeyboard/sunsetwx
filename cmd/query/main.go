@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+
+	"github.com/wwkeyboard/sunsetwx"
 )
 
 // Config of the application
@@ -19,7 +21,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("%#v", config)
+	err = printQuality(config)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
 
 // GetConfig for this run from the environment
@@ -42,4 +48,14 @@ func GetConfig() (*Config, error) {
 		username: username,
 		password: password,
 	}, nil
+}
+
+func printQuality(config *Config) error {
+	client := sunsetwx.NewClient(config.username, config.password)
+	err = client.Login()
+	if err != nil {
+		return err
+	}
+
+	quality, err := client.GetQuality(lat, lon float)
 }

@@ -33,7 +33,7 @@ func NewClient(username, password string) Client {
 	}
 }
 
-func (c *Client) setAuthToken(data []byte) error {
+func (c *Client) Login(data []byte) error {
 	var atr AccessTokenResponse
 	err := json.Unmarshal(data, &atr)
 	if err != nil {
