@@ -33,6 +33,7 @@ func NewClient(username, password string) Client {
 	}
 }
 
+// Login to the sunsetwx API
 func (c *Client) Login(data []byte) error {
 	var atr AccessTokenResponse
 	err := json.Unmarshal(data, &atr)
