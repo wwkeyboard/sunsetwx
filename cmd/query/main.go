@@ -52,10 +52,16 @@ func GetConfig() (*Config, error) {
 
 func printQuality(config *Config) error {
 	client := sunsetwx.NewClient(config.username, config.password)
-	err = client.Login()
+	err := client.Login()
 	if err != nil {
 		return err
 	}
 
-	quality, err := client.GetQuality(lat, lon float)
+	quality, err := client.GetQuality(40.1108411, -88.2075309)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("%#v\n", quality)
+	return nil
 }

@@ -8,6 +8,9 @@ import (
 	"os"
 )
 
+// BaseURL of the API we target
+const BaseURL = "https://sunburst.sunsetwx.com/v1"
+
 // Client for requesting data from the API
 type Client struct {
 	username    string
@@ -45,16 +48,18 @@ func (c *Client) Login(data []byte) error {
 	return nil
 }
 
-func (c *Client) get(path string) ([]byte, error) {
+// GetQuality prediction from the API
+func (c *Client) GetQuality(lat, lon float64) (*FeatureCollection, error) {
 	client := &http.Client{}
 
-	req, err := http.NewRequest("GET", "https://sunburst.sunsetwx.com/v1/quality", nil)
+	req, err := http.NewRequest("GET", BaseURL+"/quality", nil)
 	if err != nil {
 		fmt.Println("could make request", err)
 		os.Exit(1)
 	}
-	token := "foo"
-	req.Header.Add("Authorization", fmt.Sprintf("Bearer %v", token))
+	location := fmt.Sprintf("%f,%f", lat, lon)
+	req.URL.Query().Add("geo", location)
+	req.Header.Add("Authorization", fmt.Sprintf("Bearer %v", c.accessToken))
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -62,11 +67,11 @@ func (c *Client) get(path string) ([]byte, error) {
 		os.Exit(1)
 	}
 	defer resp.Body.Close()
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Println("error reading response body", err)
 		os.Exit(1)
 	}
-	fmt.Printf("%s\n", body)
-	return nil, nil
+	return FromJSON(body)
 }
