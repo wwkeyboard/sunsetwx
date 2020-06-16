@@ -22,9 +22,8 @@ type Client struct {
 type AccessTokenResponse struct {
 	Message     string `json:"message"`
 	Notice      string `json:"notice"`
-	AccessToken string `json:"access_token"`
-	TokenType   string `json:"token_type"`
-	ExpiresIn   int    `json:"expires_in"`
+	AccessToken string `json:"token"`
+	ExpiresIn   int    `json:"token_exp_sec"`
 	Scope       string `json:"scope"`
 }
 
@@ -110,7 +109,6 @@ func (c *Client) Login(username, password string) error {
 	if err != nil {
 		return nil
 	}
-
 	return c.setAuthToken(body)
 }
 
@@ -137,6 +135,5 @@ func (c *Client) GetQuality(lat, lon float64) (*FeatureCollection, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	return FromJSON(body)
 }
