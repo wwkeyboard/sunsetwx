@@ -51,8 +51,8 @@ func GetConfig() (*Config, error) {
 }
 
 func printQuality(config *Config) error {
-	client := sunsetwx.NewClient(config.username, config.password)
-	err := client.Login()
+	client := sunsetwx.NewClient()
+	err := client.Login(config.username, config.password)
 	if err != nil {
 		return err
 	}
