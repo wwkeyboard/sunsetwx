@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"os"
 	"strings"
 )
 
@@ -39,8 +38,7 @@ func (c *Client) get(path string, reqSetup amendRequest) ([]byte, error) {
 
 	req, err := http.NewRequest("GET", BaseURL+path, nil)
 	if err != nil {
-		fmt.Println("could make request", err)
-		os.Exit(1)
+		return nil, fmt.Errorf("building GET request %v", err)
 	}
 
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %v", c.accessToken))
@@ -71,8 +69,7 @@ func (c *Client) post(path string, data string, reqSetup amendRequest) ([]byte, 
 
 	req, err := http.NewRequest("POST", BaseURL+path, strings.NewReader(data))
 	if err != nil {
-		fmt.Println("could make request", err)
-		os.Exit(1)
+		return nil, fmt.Errorf("building POST request %v", err)
 	}
 
 	// Add the authorization to every request, for logins we can strip it out since the Bearer will be empty
