@@ -5,6 +5,8 @@ A go client to interact with [https://sunsetwx.com/](sunsetwx.com)'s API
 
 An account, go to [https://subscriptions.sunsetwx.com/](here) and click `sign up`.
 
+`go get github.com/wwkeyboard/sunsetwx`
+
 # Usage
 
 There is an [https://github.com/wwkeyboard/sunsetwx/blob/master/cmd/query/main.go](example program) in the cmd directory. The steps are:
