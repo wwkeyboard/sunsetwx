@@ -45,10 +45,12 @@ func (c *Client) get(path string, reqSetup amendRequest) ([]byte, error) {
 
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %v", c.accessToken))
 
-	// Let's the called fixup the request before we send it.
-	err = reqSetup(req)
-	if err != nil {
-		return nil, err
+	// Let the caller modify the quest before it's sent, if they want.
+	if reqSetup != nil {
+		err = reqSetup(req)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	resp, err := client.Do(req)
@@ -64,21 +66,24 @@ func (c *Client) get(path string, reqSetup amendRequest) ([]byte, error) {
 	return body, nil
 }
 
-func (c *Client) post(path string, data url.Values, reqSetup amendRequest) ([]byte, error) {
+func (c *Client) post(path string, data string, reqSetup amendRequest) ([]byte, error) {
 	client := &http.Client{}
 
-	req, err := http.NewRequest("POST", BaseURL+path, strings.NewReader(data.Encode()))
+	req, err := http.NewRequest("POST", BaseURL+path, strings.NewReader(data))
 	if err != nil {
 		fmt.Println("could make request", err)
 		os.Exit(1)
 	}
 
+	// Add the authorization to every request, for logins we can strip it out since the Bearer will be empty
 	req.Header.Add("Authorization", fmt.Sprintf("Bearer %v", c.accessToken))
 
-	// Let's the called fixup the request before we send it.
-	err = reqSetup(req)
-	if err != nil {
-		return nil, err
+	// reqSetup is intended for modifying the request before it's sent, e.g. setting headers
+	if reqSetup != nil {
+		err = reqSetup(req)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	resp, err := client.Do(req)
@@ -87,10 +92,17 @@ func (c *Client) post(path string, data url.Values, reqSetup amendRequest) ([]by
 	}
 	defer resp.Body.Close()
 
+	// if it's a non 200 response there is probably part of the body we're interested in, so we extract and return it.
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
+
+	// This may not be an error for go, but it's an error for us
+	if resp.StatusCode > 300 {
+		return body, fmt.Errorf("POST to %v returned %v", path, resp.StatusCode)
+	}
+
 	return body, nil
 }
 
@@ -100,8 +112,7 @@ func (c *Client) Login(username, password string) error {
 
 	data.Set("grant_type", "password")
 	data.Set("type", "remember_me")
-
-	body, err := c.post("/login", data, func(req *http.Request) error {
+	body, err := c.post("/login", data.Encode(), func(req *http.Request) error {
 		req.Header.Del("Authorization")
 		req.SetBasicAuth(username, password)
 		return nil
@@ -126,14 +137,14 @@ func (c *Client) setAuthToken(data []byte) error {
 
 // GetQuality prediction from the API
 func (c *Client) GetQuality(lat, lon float64) (*FeatureCollection, error) {
-	body, err := c.get("/quality", func(req *http.Request) error {
-		location := fmt.Sprintf("%f,%f", lat, lon)
-		req.URL.Query().Add("geo", location)
-		return nil
-	})
+	data := url.Values{}
+	data.Set("geo", fmt.Sprintf("%f,%f", lat, lon))
 
+	query := fmt.Sprintf("/quality?geo=%f,%f", lat, lon)
+
+	body, err := c.get(query, nil)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("getting quality: %v", string(body))
 	}
 	return FromJSON(body)
 }
