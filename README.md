@@ -1,5 +1,7 @@
 # sunsetwx
-A go client to interact with [https://sunsetwx.com/](sunsetwx.com)'s API
+A go client to interact with [https://sunsetwx.com/](sunsetwx.com)'s API.
+
+   This is being built in conjunction with a Twitter bot I'm working on, so the feature development priority will track that work unless you ask for something aditional
 
 # Prereqs
 
