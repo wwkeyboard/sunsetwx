@@ -11,6 +11,8 @@ import (
 
 // BaseURL of the API we target
 const BaseURL = "https://sunburst.sunsetwx.com/v1"
+const SunsetHost = "sunburst.sunsetwx.com"
+const SunsetVersion = "v1"
 
 // Client for requesting data from the API
 type Client struct {
@@ -137,7 +139,7 @@ func (c *Client) GetQuality(lat, lon float64) (*FeatureCollection, error) {
 	data := url.Values{}
 	data.Set("geo", fmt.Sprintf("%f,%f", lat, lon))
 
-	query := fmt.Sprintf("/quality?geo=%f,%f", lat, lon)
+	query := fmt.Sprintf("/quality?%s", data.Encode())
 
 	body, err := c.get(query, nil)
 	if err != nil {
