@@ -22,5 +22,17 @@
         "type": "tarball",
         "url": "https://github.com/NixOS/nixpkgs-channels/archive/289466dd6a11c65a7de4a954d6ebf66c1ad07652.tar.gz",
         "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
+    },
+    "vgo2nix": {
+        "branch": "master",
+        "description": "Convert go.mod files to nixpkgs buildGoPackage compatible deps.nix files [maintainer=@adisbladis]",
+        "homepage": "",
+        "owner": "adisbladis",
+        "repo": "vgo2nix",
+        "rev": "9286b289764831bd40c2a82fe311caef019056f4",
+        "sha256": "1zd8pqqdgnn8n8yl2hk2smng9z3gl90cfqb8805bk7kfxrsqa0m9",
+        "type": "tarball",
+        "url": "https://github.com/adisbladis/vgo2nix/archive/9286b289764831bd40c2a82fe311caef019056f4.tar.gz",
+        "url_template": "https://github.com/<owner>/<repo>/archive/<rev>.tar.gz"
     }
 }
